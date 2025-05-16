@@ -1,26 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Reemplazar Contenido con URL</title>
-<script>
-  async function cargarContenido() {
-    try {
-      const response = await fetch('www.zool.loca.lt');
-      if (!response.ok) {
-        throw new Error(`Error al cargar la URL: ${response.status}`);
-      }
-      const htmlContent = await response.text();
-      document.documentElement.innerHTML = htmlContent;
-    } catch (error) {
-      console.error('Error al cargar y reemplazar el contenido:', error);
-      document.body.innerHTML = '<p style="color: red;">No se pudo cargar el contenido desde la URL.</p>';
-    }
-  }
-
-  window.onload = cargarContenido;
-</script>
+<title>Crear Carta Natal</title>
+<meta http-equiv="refresh" content="0;url=https://zool.loca.lt">
 </head>
 <body>
-  <p>Cargando contenido desde https://zool.loca.lt...</p>
+  <p>El programador Ricardo no tiene encendido el servidor de esta página web. Avisale y lo prenderá. Whatsapp +54938024370<a href="https://zool.loca.lt?r=1">Reintentar</a>.</p>
 </body>
 </html>
