@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor de Twitch</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 0;
+            flex-direction: column;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #9146FF; /* Color de Twitch */
+        }
+        video {
+            width: 90%; /* Ajusta el ancho del video */
+            max-width: 1280px; /* Ancho máximo para pantallas grandes */
+            border: 2px solid #9146FF;
+            box-shadow: 0 0 15px rgba(145, 70, 255, 0.5);
+            background-color: #000; /* Fondo negro para el reproductor */
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reproductor de Stream de Twitch</h1>
+    <video id="videoPlayer" controls autoplay></video>
+
+    <div class="message">
+        <p>Si el video no carga, la URL del stream podría haber expirado.</p>
+        <p>Las URLs de stream de Twitch suelen ser temporales.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const videoUrl = 'https://sae11.playlist.ttvnw.net/v1/playlist/CuQEB7aPRWHrVgDxINr7GtsTbKjwjtc6sBl7tILB3ZypfMnOikMG-qgKdGwldq8MVZbmyyspsosQHHEG07CD2zH941HuqnHbRflzQK65F42ufXREf1ZCUxQTf6tvv8P2hSA5vtxnW12QBy1YBoxcshEQtwzycklu3OVJO2ppluXhFCSKWvpW6qbtpKmSDqEOpezarSpolcFiPsMAUX2dd2g1ZGTHO6PH3LSLZjy61YnhWOE6pFZ2sOT62K8yOH5xUSefol_D2C33FYRt6GTaMO2NPzDW7eLJ3aO2uswXFV5voLkLYdnasiTMa_O3QHFbQI31pAqLu0QElMZbHp4xtMbkI6tbqAXkO6OymNG5Coa28WHdHzJJWw_u9GSXfMpxhWCLfqL98UB1gcqISWM-eYNrEnA0Jz4EiZ_GT4GWjgUVRVW3eunk7pj-hNZGUiMezcin8dQVMNvlx1pwITzUmeUCNsvpz_p77BaXaqQD89YMiyARLo4_WjFQuJ252hKZaKzIVfys_trzWj7blHvUePk1AhzWcyf8O_HjsFd5Dfdn67Y1jg4eJMRTDsavyckH4XFugMrtR28KWfBb_XV0EkXQ00Mb_GesjIljEMJTuArdL21rhvZTjHGf8oVT_HrKDRifPuGYohXr-aRoUqzz_LaebT1g5fKZ1cCOjIgWoDIbEp1rZtaY0nUqV_4ndYP38OTPyupg4loKQBZ9MWpHBXwb2m-agdoHhJUGro_7-PvU0OoJLNFEf9-0kJS0sV0GFYYTy4z3nFUF0UWCw44ZhE5K9HlpIbcgbR0GgsA_h_4BUomyj6UuGgxRUU6oG1crg3bOL0cgASoJdXMtZWFzdC0yMMMM.m3u8';
+
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(videoUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    switch(data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            console.error("Fatal network error encountered, try to recover", data);
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            console.error("Fatal media error encountered, try to recover", data);
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Soporte nativo para HLS (ej. Safari en iOS/macOS)
+            video.src = videoUrl;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        } else {
+            console.error("Tu navegador no soporta HLS.");
+            alert("Lo siento, tu navegador no puede reproducir este tipo de stream directamente.");
+        }
+    </script>
+</body>
+</html>
